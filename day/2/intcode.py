@@ -5,6 +5,7 @@ PLS WRITE DOCUMENTATION
 """
 
 import argparse
+from copy import deepcopy
 
 
 class Halt(Exception):
@@ -40,17 +41,39 @@ OP_CODES = {
 }
 
 
-def main(input_code):
+def part2(input_code):
+    desired_output = 19690720
+    numbers = [int(i) for i in input_code.split(',')]
+
+    # this brute-force solution feels gross, sorry mom
+    for noun in range(100):
+        for verb in range(100):
+            numbers_copy = deepcopy(numbers)
+            numbers_copy[1] = noun
+            numbers_copy[2] = verb
+            try:
+                for i in range(0, len(numbers_copy), 4):
+                    OP_CODES[numbers_copy[i]](numbers_copy, i)
+            except Halt:
+                if numbers_copy[0] == desired_output:
+                    print("noun: {}, verb: {}, answer: {}".format(noun, verb, 100 * noun + verb))
+                    return
+
+            if numbers_copy[0] == desired_output:
+                print("noun: {}, verb: {}, answer: {}".format(noun, verb, 100 * noun + verb))
+                return
+    print("found no matches :(")
+
+
+def part1(input_code):
     numbers = [int(i) for i in input_code.split(',')]
     try:
         for i in range(0, len(numbers), 4):
             OP_CODES[numbers[i]](numbers, i)
     except Halt:
-        print("full numbers: [{}]".format(",".join([str(i) for i in numbers])))
         print("halted, idx 0 = {}".format(numbers[0]))
         return
 
-    print("full numbers: [{}]".format(",".join([str(i) for i in numbers])))
     print("halted, idx 0 = {}".format(numbers[0]))
 
 
@@ -61,4 +84,4 @@ def parse():
 
 
 if __name__ == "__main__":
-    main(**vars(parse()))
+    part2(**vars(parse()))
