@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-PLS WRITE DOCUMENTATION
+day 4
 """
 
 import argparse
@@ -25,19 +25,26 @@ def is_valid_password(password):
         - Going from left to right, the digits never decrease;
             they only ever increase or stay the same (like 111123 or 135679).
 
+        part 2 - new rule!
+        - there needs to be at least 1 group of only 2 adjacent numbers
+
     :type password: int
     :rtype: bool
     """
     digits = [int(c) for c in str(password)]
-    has_dupe = False
+    adjacent_group_sizes = set()
+    most_recent_group_size = 1
     for i, digit in enumerate(digits):
         if i == 0:
             continue  # easiest way to avoid off-by-one errors
         if digit < digits[i - 1]:
             return False
         elif digit == digits[i - 1]:
-            has_dupe = True
-    return has_dupe
+            most_recent_group_size += 1
+        else:
+            adjacent_group_sizes.add(most_recent_group_size)
+            most_recent_group_size = 1
+    return (2 in adjacent_group_sizes) or (most_recent_group_size == 2)
 
 
 def main(num_range):
